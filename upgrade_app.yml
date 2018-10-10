@@ -1,0 +1,43 @@
+---
+- name: Upgrade website
+  hosts: webservers
+  serial: 1
+  gather_facts: true
+  become: true
+  vars: 
+    - message: "Welcome to our new website!"
+  tasks:
+  - name: Remove this webserver from haproxy
+    haproxy:
+      state: disabled
+      host: '{{ inventory_hostname }}'
+      backend: webservers
+      wait: yes
+    delegate_to: haproxy
+
+  - name: Wait 5 seconds to show this server is now disabled
+    pause:
+      seconds: 5
+
+  - name: stop service
+    service:
+      name: httpd
+      state: stopped
+
+  - name: copy new template
+    template: 
+      src: index_new.html.j2
+      dest: /var/www/html/index.html
+
+  - name: start service
+    service:
+      name: httpd
+      state: started
+
+  - name: Add this webserver again to haproxy
+    haproxy:
+      state: enabled
+      host: '{{ inventory_hostname }}'
+      backend: webservers
+      wait: yes
+    delegate_to: haproxy
