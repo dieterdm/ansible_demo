@@ -1,6 +1,6 @@
 ---
 - name: Upgrade website
-  hosts: webservers
+  hosts: tag_webservers
   serial: 1
   gather_facts: true
   become: true
