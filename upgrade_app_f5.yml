@@ -1,0 +1,53 @@
+---
+- name: Upgrade website
+  hosts: tag_webservers
+  serial: 1
+  gather_facts: true
+  become: true
+  vars:
+    - message: "Welcome to our new website!"
+  tasks:
+  - name: Setup provider
+    set_fact:
+     provider:
+       server: "10.10.21.200"
+       user: "admin"
+       password: "admin"
+       server_port: "8443"
+       validate_certs: "no"
+    delegate_to: localhost
+
+  - name: Remove this webserver from loadbalancer
+    bigip_pool_member:
+      provider: "{{provider}}"
+      state: "disabled"
+      name: "{{ hostvars[item].inventory_hostname }}"
+      pool: "http_pool"
+    delegate_to: localhost
+
+  - name: Wait 5 seconds to show this server is now disabled
+    pause:
+      seconds: 5
+
+  - name: stop service
+    service:
+      name: httpd
+      state: stopped
+
+  - name: copy new template
+    template:
+      src: index_new.html.j2
+      dest: /var/www/html/index.html
+
+  - name: start service
+    service:
+      name: httpd
+      state: started
+
+  - name: Add this webserver again to loadbalancer
+    bigip_pool_member:
+      provider: "{{provider}}"
+      state: "enabled"
+      name: "{{ hostvars[item].inventory_hostname }}"
+      pool: "http_pool"
+    delegate_to: localhost
