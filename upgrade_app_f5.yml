@@ -3,7 +3,6 @@
   hosts: tag_webservers
   serial: 1
   gather_facts: true
-  become: true
   vars:
     - message: "Welcome to our new website!"
   tasks:
@@ -33,17 +32,20 @@
     service:
       name: httpd
       state: stopped
+    become: true
 
   - name: copy new template
     template:
       src: index_new.html.j2
       dest: /var/www/html/index.html
-
+    become: true
+    
   - name: start service
     service:
       name: httpd
       state: started
-
+    become: true
+    
   - name: Add this webserver again to loadbalancer
     bigip_pool_member:
       provider: "{{provider}}"
