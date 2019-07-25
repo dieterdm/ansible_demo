@@ -20,7 +20,7 @@
     bigip_pool_member:
       provider: "{{provider}}"
       state: "disabled"
-      host: "{{ ansible_host }}"
+      host: "{{ inventory_hostname }}"
       port: 80
       pool: "http_pool"
     delegate_to: localhost
@@ -51,7 +51,7 @@
     bigip_pool_member:
       provider: "{{provider}}"
       state: "enabled"
-      host: "{{ ansible_host }}"
+      host: "{{ inventory_hostname }}"
       port: 80
       pool: "http_pool"
     delegate_to: localhost
