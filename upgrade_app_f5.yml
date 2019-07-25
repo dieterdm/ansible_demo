@@ -21,7 +21,7 @@
       provider: "{{provider}}"
       state: "disabled"
       host: "{{ ansible_host }}"
-      port:80
+      port: 80
       pool: "http_pool"
     delegate_to: localhost
 
@@ -52,6 +52,6 @@
       provider: "{{provider}}"
       state: "enabled"
       host: "{{ ansible_host }}"
-      port:80
+      port: 80
       pool: "http_pool"
     delegate_to: localhost
