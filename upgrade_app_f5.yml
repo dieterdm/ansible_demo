@@ -9,7 +9,7 @@
   - name: Setup provider
     set_fact:
      provider:
-       server: "{{ hostvars['F5']['ansible_host'] }}"
+       server: "F5"
        user: "admin"
        password: "admin"
        server_port: "8443"
